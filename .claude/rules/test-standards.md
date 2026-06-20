@@ -40,3 +40,11 @@ func test1() -> void:  # VIOLATION: no descriptive name
     h.take_damage(25)  # VIOLATION: no arrange step, no clear assert
     assert_true(h.current_health < 100)  # VIOLATION: imprecise assertion
 ```
+
+## 覆盖率门槛（项目强制）
+
+- **每次代码改动必须伴随测试**：新功能配新测试，bug 修复配回归测试。
+- **整库 GDScript 行覆盖率必须 > 95%（含 UI）** —— 低于即视为未完成（BLOCKING）。
+  - 覆盖的是**代码行**（含玩法/AI/状态机/工具，以及 UI 控制器/HUD/菜单等脚本逻辑），不是像素。
+  - 视觉保真与手感另按 CCGS 用截图 / playtest 验证，与行覆盖率并存、不互斥。
+- 覆盖率工具与统计方式在 `/test-setup` 阶段落地（默认 gdUnit4）。

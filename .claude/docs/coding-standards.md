@@ -27,6 +27,8 @@
 
 # Testing Standards
 
+> **项目覆盖率门槛**：整库 GDScript 行覆盖率 **> 95%（含 UI）**，BLOCKING；每次代码改动必带测试。详见 `.claude/rules/test-standards.md`。
+
 ## Test Evidence by Story Type
 
 All stories must have appropriate test evidence before they can be marked Done:
