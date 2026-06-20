@@ -4,7 +4,11 @@
 |------|-----|
 | 主题 | GitHub Actions CI/CD + release-please 自动化 changelog/tag/release |
 | 日期 | 2026-06-20 |
-| 状态 | 已评审通过 |
+| 状态 | 已实现（端到端验证通过；首发 v0.1.1） |
+
+> **落地偏离记录**：① `.gdlintrc` 未创建——gdlint 默认规则已通过本项目代码，加部分配置反有禁用规则之险（YAGNI）。
+> ② 首个 release 为 **v0.1.1** 而非 0.1.0——release-please 将 manifest 的 0.1.0 视为已发布基线并按 `feat:` 提交 bump，
+> 且 release PR 在 `Release-As: 0.1.0` 应急前已被合并；经确认保留 0.1.1，后续正常递增。
 | 依赖 | 已完成的项目初始化（`2026-06-20-jianghu-init-design.md`） |
 
 ---
