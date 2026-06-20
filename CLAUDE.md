@@ -26,6 +26,9 @@ godot --path . --editor
 godot --headless --path . --import
 godot --headless --path . --quit-after 5      # 跑主场景若干帧后退出
 
+# 本地代码检查（提交前自查，CI 同款）
+pip install "gdtoolkit==4.*" && gdformat --check src/ && gdlint src/
+
 # 测试（/test-setup 落地 gdUnit4 后）
 godot --headless --script tests/gdunit4_runner.gd
 
@@ -71,3 +74,9 @@ See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
 ## Context Management
 
 @.claude/docs/context-management.md
+
+## CI/CD
+
+- **CI**（`.github/workflows/ci.yml`）：push/PR 触发，GDScript lint/format + Godot 导入冒烟全 blocking。
+- **发版**（`.github/workflows/release-please.yml`）：Conventional Commits → 自动 release PR → 合并即打 tag + 建 Release + 更新 `CHANGELOG.md`。版本真相源 `version.txt`。
+- 详见 `docs/ci-cd.md`（含本地预检与分支保护开启步骤）。
