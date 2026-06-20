@@ -4,7 +4,7 @@
 |------|-----|
 | 主题 | jianghu 项目初始化（CCGS 框架 + Godot 4.6 工程骨架 + iOS） |
 | 日期 | 2026-06-20 |
-| 状态 | 待用户评审 |
+| 状态 | 已评审通过（含"整库 >95% 覆盖率"决策） |
 | 作者 | Claude Code（与用户协作） |
 
 ---
@@ -107,7 +107,7 @@ iOS 导出**的工程骨架，以及一份 jianghu 专属的 `CLAUDE.md`。
 - 保留 CCGS 的协作协议（Question → Options → Decision → Draft → Approval）与各 `@`-include；
 - **顶部加一条**：全程简体中文回复（见 4.6，确保全局生效，不依赖 rule 触发）。
 - 同步把 `.claude/docs/technical-preferences.md` 按上述选择填好（等价于 `/setup-engine` 产出）：
-  Minimum Coverage = 95%（可测逻辑代码）、Testing Framework = gdUnit4（默认，`/test-setup` 时可改）。
+  Minimum Coverage = 95%（整库行覆盖，含 UI）、Testing Framework = gdUnit4（默认，`/test-setup` 时可改）。
 
 ### 4.5 Git 初始化
 
@@ -127,15 +127,13 @@ iOS 导出**的工程骨架，以及一份 jianghu 专属的 `CLAUDE.md`。
 
 **(b) `.claude/rules/test-standards.md`（编辑既有文件，追加）**
 - **每次代码改动必须伴随测试**（新功能测试 + bug 修复回归测试）。
-- **覆盖率门槛：可测逻辑代码行覆盖率必须 > 95%**，低于即视为未完成（BLOCKING）。
-  - 范围界定（与 CCGS "What NOT to Automate" 一致）：覆盖率统计针对**玩法系统/公式/AI/状态机/工具类等
-    可测逻辑代码**；**不含**视觉保真、手感、UI 渲染、平台相关渲染等 CCGS 明确豁免自动化的部分。
+- **覆盖率门槛：整库 GDScript 行覆盖率必须 > 95%**（用户决定，**含 UI**），低于即视为未完成（BLOCKING）。
+  - 含义：所有 `.gd` 脚本（玩法/AI/状态机/工具，以及 UI 控制器/HUD/菜单等的脚本逻辑）都须被测试覆盖；
+    自动化测的是**代码行**，不是像素。视觉保真与手感仍按 CCGS 用截图 / playtest 另行验证（两者并存，不互斥）。
+  - 已知代价：UI/集成层需要更多自动化测试，脆弱性更高、维护成本更高；具体测试框架与覆盖率工具在
+    `/test-setup` 阶段落地（见第 8 节）。
 - 同步在 `.claude/docs/coding-standards.md` 的 Testing Standards 与 `technical-preferences.md`
-  反映 95% 门槛。
-
-> ⚠️ **待用户确认的张力点**：CCGS 原则上"视觉/手感/UI 渲染不做自动化测试"。本 spec 把 >95% 覆盖率
-> 界定为"可测逻辑代码"，而非整库（含视觉）。若用户坚持"整库 >95%"，需在 `/test-setup` 阶段额外引入
-> UI/集成自动化方案并接受其脆弱性。
+  反映"整库 95%"门槛。
 
 ## 5. 目标目录结构（初始化后）
 
@@ -194,5 +192,6 @@ godot --headless --export-debug "iOS" build/jianghu.ipa
 - **iOS export templates 未安装**：导出命令在装模板前会失败。本次仅写预设 + 文档；按需再装。
 - **GDScript 覆盖率工具**：Godot 无原生行覆盖统计，gdUnit4 需配合覆盖率插件/方案；具体工具在
   `/test-setup` 阶段确定。门槛策略先立，工具后落。
-- **覆盖率范围张力**：见 4.6 ⚠️，待用户确认"可测逻辑代码 >95%"还是"整库 >95%"。
+- **覆盖率范围（已定）**：用户选定**整库 >95%**（含 UI）。需在 `/test-setup` 阶段为 UI/集成层引入
+  自动化测试方案，并接受其维护成本与脆弱性；视觉/手感仍用截图 + playtest 并行验证。
 - **bundle id / 应用名为占位**：上架前需替换为真实值。
