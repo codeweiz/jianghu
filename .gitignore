@@ -41,7 +41,7 @@ dist/
 # === Engine: Godot ===
 .godot/
 *.translation
-export_presets.cfg
+# export_presets.cfg 入库（仅占位 bundle id，无签名密钥），便于复现
 # Uncomment if using Godot:
 # *.import
 
