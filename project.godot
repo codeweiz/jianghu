@@ -1,0 +1,25 @@
+config_version=5
+
+[application]
+
+config/name="江湖"
+config/description="武侠题材 2D 横屏 iOS 手游"
+run/main_scene="res://src/main.tscn"
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/handheld/orientation="landscape"
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[input_devices]
+
+pointing/emulate_mouse_from_touch=true
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"
