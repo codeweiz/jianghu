@@ -1,18 +1,37 @@
 # Claude Code Game Studios -- Game Studio Agent Architecture
 
-Indie game development managed through 49 coordinated Claude Code subagents.
+> **语言约定（最高优先级）**：本项目全程使用**简体中文**回复用户；代码注释一律用简体中文，且言之有物、言简意赅、说清"是什么 + 为什么"。详见 `.claude/rules/language-zh.md`。
+
+Indie game development managed through 37 coordinated Claude Code subagents.
 Each agent owns a specific domain, enforcing separation of concerns and quality.
 
 ## Technology Stack
 
-- **Engine**: [CHOOSE: Godot 4 / Unity / Unreal Engine 5]
-- **Language**: [CHOOSE: GDScript / C# / C++ / Blueprint]
-- **Version Control**: Git with trunk-based development
-- **Build System**: [SPECIFY after choosing engine]
-- **Asset Pipeline**: [SPECIFY after choosing engine]
+- **Engine**: Godot 4.6（本机 4.6.3 stable，已 pin，见 `docs/engine-reference/godot/VERSION.md`）
+- **Language**: GDScript（静态类型）
+- **Rendering**: Mobile 渲染后端（2D）
+- **Platform**: iOS（移动端 / 触控 / 横屏 1920×1080）
+- **Version Control**: Git，trunk-based development
+- **Build System**: Godot 导出（iOS → Xcode 26.5 签名打包）
+- **Asset Pipeline**: Godot 内置导入（`assets/` 存放美术/音频/数据）
+- **Engine Specialists**: `godot-specialist`（主）/ `godot-gdscript-specialist` / `godot-shader-specialist`
 
-> **Note**: Engine-specialist agents exist for Godot, Unity, and Unreal with
-> dedicated sub-specialists. Use the set matching your engine.
+## Commands
+
+```bash
+# 编辑器内打开
+godot --path . --editor
+
+# 无头冒烟：打开并规范化工程、验证可解析
+godot --headless --path . --import
+godot --headless --path . --quit-after 5      # 跑主场景若干帧后退出
+
+# 测试（/test-setup 落地 gdUnit4 后）
+godot --headless --script tests/gdunit4_runner.gd
+
+# iOS 导出（需先装 export templates、在编辑器 Export 对话框填 Team ID/bundle id）
+godot --headless --path . --export-debug "iOS" build/jianghu.ipa
+```
 
 ## Project Structure
 
