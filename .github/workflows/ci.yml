@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: GDScript Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安装 gdtoolkit
+        run: pip install "gdtoolkit==4.*"
+      - name: 格式检查（gdformat）
+        run: gdformat --check src/
+      - name: 静态检查（gdlint）
+        run: gdlint src/
+
+  import-smoke:
+    name: Godot 导入冒烟
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.6.3
+          use-dotnet: false
+      - name: 导入工程（无 ERROR 即通过）
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee import.log
+          if grep -qE "^ERROR|SCRIPT ERROR" import.log; then
+            echo "::error::Godot 导入出现错误"; exit 1
+          fi
+      - name: 运行主场景（须打印「江湖 启动」）
+        run: |
+          godot --headless --path . --quit-after 5 2>&1 | tee run.log
+          grep -q "江湖 启动" run.log
+
+  test:
+    name: 单元测试（存在才跑）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.6.3
+          use-dotnet: false
+      - name: 跑 gdUnit4（若已配置）
+        run: |
+          if [ -f tests/gdunit4_runner.gd ]; then
+            godot --headless --path . --import
+            godot --headless --path . --script tests/gdunit4_runner.gd
+          else
+            echo "暂无测试 runner（tests/gdunit4_runner.gd 不存在），跳过。/test-setup 后自动启用。"
+          fi
+
+  pr-title-lint:
+    name: PR 标题规范（Conventional Commits）
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
